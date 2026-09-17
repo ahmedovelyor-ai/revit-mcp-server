@@ -47,21 +47,21 @@ def suppress_warnings(transaction):
 
 
 def normalize_string(text):
-    """Safely normalize string values to ASCII-safe output."""
+    """Safely normalize string values, preserving Unicode (e.g. Cyrillic) for JSON."""
     if text is None:
         return "Unnamed"
     try:
-        return str(text).strip().encode('ascii', 'replace').decode('ascii')
+        return unicode(text).strip()
     except Exception:
         return "Unnamed"
 
 
 def sanitize_string(text):
-    """Sanitize a string to be ASCII-safe for JSON serialization."""
+    """Safely coerce a value to a Unicode string for JSON serialization."""
     if text is None:
         return "Unnamed"
     try:
-        return str(text).encode('ascii', 'replace').decode('ascii')
+        return unicode(text)
     except Exception:
         return "Unnamed"
 
@@ -70,7 +70,7 @@ def get_element_name(element):
     """
     Get the name of a Revit element.
     Useful for both FamilySymbol and other elements.
-    Returns ASCII-safe string for JSON serialization.
+    Returns a Unicode-safe string for JSON serialization.
     """
     try:
         name = element.Name
