@@ -2,8 +2,29 @@
 from pyrevit import DB
 import traceback
 import logging
+import json
 
 logger = logging.getLogger(__name__)
+
+
+def parse_json_request(request):
+    """Parse a routes request body as JSON, decoding UTF-8 bytes explicitly.
+
+    IronPython's json.loads on a raw str (bytes) does not reliably decode
+    non-ASCII text (e.g. Cyrillic level/family/room names) the way CPython's
+    does -- the old `json.loads(request.data) if isinstance(request.data, str)
+    else request.data` pattern silently corrupted such names, so lookups like
+    level_map.get(level_name) never matched. Decoding explicitly first fixes
+    this for every route that parses a JSON body.
+    """
+    data = request.data
+    if isinstance(data, str):
+        try:
+            data = data.decode("utf-8")
+        except UnicodeDecodeError:
+            pass
+        return json.loads(data)
+    return data
 
 
 class _FailureSwallower(DB.IFailuresPreprocessor):

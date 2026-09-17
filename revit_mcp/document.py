@@ -8,6 +8,7 @@ deliberately do not open one.
 """
 
 from pyrevit import routes, revit, DB
+from utils import parse_json_request
 import json
 import os
 import logging
@@ -39,7 +40,7 @@ def register_document_routes(api):
 
             data = {}
             if request and request.data:
-                data = json.loads(request.data) if isinstance(request.data, str) else request.data
+                data = parse_json_request(request)
 
             file_path = data.get("file_path")
             overwrite = bool(data.get("overwrite", True))

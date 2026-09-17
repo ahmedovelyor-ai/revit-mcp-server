@@ -158,16 +158,17 @@ def register_model_info_routes(api):
 
                 for room in rooms_collector:
                     try:
-                        # Get room name safely
-                        name_param = room.LookupParameter("Name")
+                        # Get room name/number via BuiltInParameter -- LookupParameter("Name")
+                        # only matches the English UI label and returns None on localized
+                        # (e.g. Russian) projects, making every room look "Unnamed".
+                        name_param = room.get_Parameter(DB.BuiltInParameter.ROOM_NAME)
                         room_name = (
                             name_param.AsString()
                             if name_param and name_param.HasValue
                             else "Unnamed Room"
                         )
 
-                        # Get room number safely
-                        number_param = room.LookupParameter("Number")
+                        number_param = room.get_Parameter(DB.BuiltInParameter.ROOM_NUMBER)
                         room_number = (
                             number_param.AsString()
                             if number_param and number_param.HasValue

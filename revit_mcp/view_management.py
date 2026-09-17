@@ -4,7 +4,7 @@ View Management Module for Revit MCP
 Handles view creation and active view switching
 """
 
-from utils import get_element_name, get_element_id_value, suppress_warnings
+from utils import get_element_name, get_element_id_value, suppress_warnings, parse_json_request
 from pyrevit import routes, revit, DB
 import json
 import traceback
@@ -27,7 +27,7 @@ def register_view_management_routes(api):
                     data={"error": "No active Revit document"}, status=503
                 )
 
-            data = json.loads(request.data) if isinstance(request.data, str) else request.data
+            data = parse_json_request(request)
 
             view_type = data.get("view_type")
             name = data.get("name")
@@ -312,7 +312,7 @@ def register_view_management_routes(api):
                     data={"error": "No active Revit document"}, status=503
                 )
 
-            data = json.loads(request.data) if isinstance(request.data, str) else request.data
+            data = parse_json_request(request)
 
             view_name = data.get("view_name")
             if not view_name:

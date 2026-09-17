@@ -4,7 +4,7 @@ Rooms Module for Revit MCP
 Handles room creation and room separation lines
 """
 
-from utils import get_element_name, get_element_id_value, make_element_id, suppress_warnings
+from utils import get_element_name, get_element_id_value, make_element_id, suppress_warnings, parse_json_request
 from pyrevit import routes, revit, DB
 from System.Collections.Generic import List
 import json
@@ -28,7 +28,7 @@ def register_room_routes(api):
                     data={"error": "No active Revit document"}, status=503
                 )
 
-            data = json.loads(request.data) if isinstance(request.data, str) else request.data
+            data = parse_json_request(request)
 
             level_name = data.get("level_name")
             if not level_name:
@@ -165,7 +165,7 @@ def register_room_routes(api):
                     data={"error": "No active Revit document"}, status=503
                 )
 
-            data = json.loads(request.data) if isinstance(request.data, str) else request.data
+            data = parse_json_request(request)
 
             lines = data.get("lines", [])
             if not lines:
